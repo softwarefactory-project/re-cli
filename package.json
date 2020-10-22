@@ -16,6 +16,7 @@
     "bs-platform": "^8.2.0"
   },
   "dependencies": {
+    "bs-parse": "https://github.com/aitoroses/bs-parse",
     "tablecloth-bucklescript": "https://github.com/darklang/tablecloth"
   }
 }
