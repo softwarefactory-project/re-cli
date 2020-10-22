@@ -14,5 +14,8 @@
   "license": "MIT",
   "devDependencies": {
     "bs-platform": "^8.2.0"
+  },
+  "dependencies": {
+    "tablecloth-bucklescript": "https://github.com/darklang/tablecloth"
   }
 }

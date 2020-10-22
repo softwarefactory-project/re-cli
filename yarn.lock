@@ -6,3 +6,7 @@ bs-platform@^8.2.0:
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-8.3.1.tgz#49ac0d7b84bcec190a7361353557cae965f92c67"
   integrity sha512-U7nKEGF1BfvODzcv1g2loeltE8YRCgX8mMlCojImsgI0HwfQKEq7ggO5dF1ae9ZfFxiLaI0069ZyoK5GLBO2OQ==
+
+"tablecloth-bucklescript@https://github.com/darklang/tablecloth":
+  version "0.0.7"
+  resolved "https://github.com/darklang/tablecloth#7896ab4546195c452489a67b29fbb02c350c381d"
