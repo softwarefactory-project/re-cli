@@ -5,17 +5,16 @@
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "echo no test!"
+    "test": "node src/Typescript.test.bs.js"
   },
-  "keywords": [
-    "BuckleScript"
-  ],
+  "keywords": ["BuckleScript"],
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "bs-platform": "^8.2.0"
   },
   "dependencies": {
+    "bs-parse": "https://github.com/aitoroses/bs-parse",
     "tablecloth-bucklescript": "https://github.com/darklang/tablecloth"
   }
 }
