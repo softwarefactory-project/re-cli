@@ -11,7 +11,8 @@
   },
   "suffix": ".bs.js",
   "bs-dependencies": [
-    "tablecloth-bucklescript"
+    "tablecloth-bucklescript",
+    "bs-parse"
   ],
   "warnings": {
     "error" : "+101"
