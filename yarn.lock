@@ -9,6 +9,10 @@ argparse@^1.0.7:
   dependencies:
     sprintf-js "~1.0.2"
 
+"bs-parse@https://github.com/aitoroses/bs-parse":
+  version "1.0.0"
+  resolved "https://github.com/aitoroses/bs-parse#db070fffd0de232c7fe4e733e84761bb4fa3f20a"
+
 bs-platform@^8.2.0:
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/bs-platform/-/bs-platform-8.3.1.tgz#49ac0d7b84bcec190a7361353557cae965f92c67"
