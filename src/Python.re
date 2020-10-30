@@ -37,6 +37,19 @@ let catchToResult = (f, x) =>
   | exception e => e->Exception.message->Error
   };
 
+// Binding to lowlevel node child_process.execFileSync
+[@bs.module "child_process"]
+external execFileSync:
+  (string, array(string), ~options: Js.t({..})=?) => Node_buffer.t =
+  "execFileSync";
+
+// pread() to pipe data into another process
+let pread =
+    (stdin: string, process: string, argv: array(string))
+    : Result.t(string, string) =>
+  catchToResult(process->execFileSync(~options={"input": stdin}), argv)
+  ->Result.map(~f=Node_buffer.toString);
+
 // open() / read() / close() is not easy to model with nodejs because of string encoding
 // instead a more simple read_file function:
 let read_file = (path: string): Result.t(string, string) =>
