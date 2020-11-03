@@ -1,0 +1,8 @@
+Code-Review+2: Fabien Boucher <fboucher@redhat.com>
+Workflow+1: Fabien Boucher <fboucher@redhat.com>
+Verified+2: Zuul CI <zuul@softwarefactory-project.io>
+Submitted-by: Zuul CI <zuul@softwarefactory-project.io>
+Submitted-at: Tue, 03 Nov 2020 09:27:05 +0000
+Reviewed-on: https://softwarefactory-project.io/r/19897
+Project: software-factory/re-cli
+Branch: refs/heads/master
