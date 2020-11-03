@@ -70,3 +70,24 @@ module Json = {
   let load = (file_path: string): Result.t(t, string) =>
     file_path->read_file->Result.andThen(~f=loads);
 };
+
+module Yaml = {
+  [@bs.module "js-yaml"]
+  external yamlParse: (string, ~options: 'a=?, unit) => Js.Json.t = "safeLoad";
+  [@bs.module "js-yaml"]
+  external yamlStringify: (Js.Json.t, ~options: 'a=?, unit) => string =
+    "safeDump";
+
+  let loads = (content: string): Result.t(Json.t, string) => {
+    catchToResult(
+      (content: string) => yamlParse(content, ~options=None, ()),
+      content,
+    );
+  };
+
+  let load = (file_path: string): Result.t(Json.t, string) =>
+    file_path->read_file->Result.andThen(~f=loads);
+
+  let dumps = (content: Json.t): string =>
+    yamlStringify(content, ~options=None, ());
+};

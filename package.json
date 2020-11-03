@@ -16,6 +16,7 @@
     "bs-platform": "^8.2.0"
   },
   "dependencies": {
+    "js-yaml": "^3.14.0",
     "tablecloth-bucklescript": "https://github.com/darklang/tablecloth"
   }
 }
