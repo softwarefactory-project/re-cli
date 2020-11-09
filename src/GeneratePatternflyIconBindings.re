@@ -72,15 +72,139 @@ let createReasonBinding =
 |j};
   });
 
+let addFAList = (pfList: list(string)) =>
+  pfList
+  ->List.append([
+      // TODO: get the list automatically
+      "AngleDoubleLeft",
+      "AngleDoubleRight",
+      "AngleDown",
+      "AngleLeft",
+      "AngleRight",
+      "AngleUp",
+      "ArrowCircleDown",
+      "ArrowCircleUp",
+      "ArrowRight",
+      "ArrowsAltV",
+      "BalanceScale",
+      "Ban",
+      "Bars",
+      "Bug",
+      "CaretDown",
+      "CheckCircle",
+      "Check",
+      "ClipboardCheck",
+      "CodeBranch",
+      "Code",
+      "Cog",
+      "Columns",
+      "CompressArrowsAlt",
+      "Compress",
+      "Copy",
+      "Cube",
+      "Cubes",
+      "Database",
+      "Desktop",
+      "Download",
+      "Dropbox",
+      "Drupal",
+      "EllipsisV",
+      "ExclamationCircle",
+      "ExclamationTriangle",
+      "ExpandArrowsAlt",
+      "Expand",
+      "ExternalLinkAlt",
+      "FacebookSquare",
+      "Filter",
+      "Flag",
+      "Folder",
+      "FolderOpen",
+      "Github",
+      "Gitlab",
+      "Google",
+      "GripHorizontal",
+      "GripVertical",
+      "Home",
+      "InfoCircle",
+      "Linkedin",
+      "Linux",
+      "Lock",
+      "LockOpen",
+      "LongArrowAltDown",
+      "LongArrowAltUp",
+      "MapMarker",
+      "Memory",
+      "Microchip",
+      "MinusCircle",
+      "Minus",
+      "OutlinedCalendarAlt",
+      "OutlinedClock",
+      "OutlinedComments",
+      "OutlinedHdd",
+      "OutlinedQuestionCircle",
+      "OutlinedWindowRestore",
+      "PauseCircle",
+      "Pause",
+      "PencilAlt",
+      "Play",
+      "PlusCircle",
+      "Plus",
+      "PowerOff",
+      "Print",
+      "QuestionCircle",
+      "Redo",
+      "Search",
+      "SearchMinus",
+      "SearchPlus",
+      "ShareSquare",
+      "SortAmountDownAlt",
+      "SortAmountDown",
+      "StackOverflow",
+      "SyncAlt",
+      "Tag",
+      "Thumbtack",
+      "TimesCircle",
+      "Times",
+      "Trash",
+      "Twitter",
+      "Undo",
+      "User",
+      "Users",
+      "Windows",
+      "Wrench",
+    ])
+  ->pureResult;
+
 let dest = "~/src/softwarefactory-project.io/software-factory/re-patternfly/src/PFIcons.re";
+
+let pfIcons =
+  "~/src/github.com/patternfly/patternfly/src/icons/definitions/pf-icons.json"
+  ->Json.load
+  ->Result.andThen(~f=getPatternflyIconsList)
+  ->Result.andThen(~f=addFAList)
+  ->Result.andThen(~f=xs =>
+      xs
+      ->createReasonBinding(convertPf)
+      ->List.sort(~compare=String.compare)
+      ->pureResult
+    );
+
+/*
+ let allIcons =
+   "~/src/softwarefactory-project.io/software-factory/sf-ui/node_modules/@patternfly/react-icons/dist/js/icons/"
+   ->Os.Path.expanduser
+   ->Os.listdir
+   ->List.filter(~f=n => String.endsWith(n, ~suffix=".js"))
+   ->List.map(~f=n => String.dropRight(n, ~count="Icon.js"->String.length))
+   ->createReasonBinding(convertPf)
+   ->List.join(~sep="\n");
+ */
 
 Js.log(
   switch (
-    "~/src/github.com/patternfly/patternfly/src/icons/definitions/pf-icons.json"
-    ->Json.load
-    ->Result.andThen(~f=getPatternflyIconsList)
-    ->Result.andThen(~f=xs => xs->createReasonBinding(convertPf)->pureResult)
-    ->Result.andThen(~f=xs => xs->List.join(~sep="\n")->write_file(dest))
+    pfIcons->Result.andThen(~f=xs =>
+      xs->List.join(~sep="\n")->write_file(dest)
+    )
   ) {
   | Ok(_) => "Written: " ++ dest
   | Error(e) => "Error: " ++ e

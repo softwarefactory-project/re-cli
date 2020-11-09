@@ -86,7 +86,10 @@ let extraProps = (name: string): list(property) => {
   [
     (name->String.startsWith(~prefix="Card"), [style]),
     (name == "Page", [style]),
-    (name == "Card", [onClick]),
+    (
+      List.includes(["Card", "Button"], name, ~equal=String.equal),
+      [onClick],
+    ),
   ]
   ->List.map(~f=((enabled, props)) => enabled ? props : [])
   ->List.flatten;
