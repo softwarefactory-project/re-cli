@@ -380,7 +380,8 @@ let reason = () => {
       ~iconPosition: [@bs.string][
          | [@bs.as "left"] `Left
          | [@bs.as "right"] `Right
-         ] =?
+         ] =?,
+      ~onClick: ReactEvent.Mouse.t => unit=?
     ) => React.element = "Button";
 }|},
     );
