@@ -385,10 +385,15 @@ let reason = () => {
 }|},
     );
 };
+
+let (>>>) = Fun.(>>);
+
 let show =
-  Fun.(
-    Parser.parseFile >> PatternflyBindings.getComponents >> Js.log >> Result.ok
-  );
+  Parser.parseFile
+  >>> PatternflyBindings.getComponents
+  >>> Js.log
+  >>> Result.ok;
+
 let button = "~/src/github.com/patternfly/patternfly-react/packages/react-core/src/components/Button/Button.tsx";
 button->Python.read_file->Result.andThen(~f=show);
 
