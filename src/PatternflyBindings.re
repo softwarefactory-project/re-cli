@@ -123,4 +123,4 @@ let create = (defs: definitions): list((string, list(string))) => {
 };
 
 let getComponents = d =>
-  d->create->List.map(~f=((c, e)) => c)->List.join(~sep="\n");
+  d->create->List.map(~f=((c, _e)) => c)->List.join(~sep="\n");
