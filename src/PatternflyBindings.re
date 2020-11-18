@@ -87,7 +87,7 @@ let extraProps = (name: string): list(property) => {
     (name->String.startsWith(~prefix="Card"), [style]),
     (name == "Page", [style]),
     (
-      List.includes(["Card", "Button"], name, ~equal=String.equal),
+      List.includes(["Card", "Button", "Brand"], name, ~equal=String.equal),
       [onClick],
     ),
   ]

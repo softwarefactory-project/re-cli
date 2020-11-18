@@ -8,12 +8,19 @@ let dest =
   ->Python.Os.Path.expanduser;
 
 let selectedComponents = [
+  "Avatar",
   "Checkbox",
   "Card",
   "Banner",
   "Button",
+  "Brand",
+  "Badge",
   "Alert",
   "AlertGroup",
+  "Form",
+  "Text",
+  "TextArea",
+  "TextInput",
   "LoginPage",
   "Page",
 ];
