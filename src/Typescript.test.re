@@ -26,6 +26,14 @@ let props = [
     ->equal("enums", ["ok", "info"]),
   () =>
     (
+      run(Parser.parsePropTypeEnum, "
+       | 'ok'
+       | 'info'")
+      |> get_exn
+    )
+    ->equal("indentedEnums", ["ok", "info"]),
+  () =>
+    (
       run(
         Parser.parsePropTypeObject,
         "{
@@ -78,6 +86,15 @@ let interface = [
       |> get_exn
     )
     ->equal("alertInterface", {name: "Alert", properties: []});
+  },
+  () => {
+    let typescriptExpr = "export interface TextInputProps {
+  /** Type that the input accepts. */
+  type?: 'text' | 'date' | 'datetime-local';
+}";
+    // typescriptExpr->String.dropLeft(~count=99)->Js.log;
+    (run(Parser.parseComponentInterface, typescriptExpr) |> get_exn).name
+    ->equal("TextInput", "TextInput");
   },
   () => {
     let typescriptExpr = "export interface AboutModalProps {

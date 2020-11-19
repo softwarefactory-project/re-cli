@@ -10,9 +10,11 @@ let nameToList = name =>
 let createProperty = (prop: property): Result.t(string, string) => {
   (
     switch (prop.type_) {
+    | Raw("React.RefObject<any>") => "skip-ref"->Error
     | Raw("React.ReactNode") => "'children"->Ok
     | Raw("React.ElementType<any>") => "React.element"->Ok
     | Raw("React.ReactElement") => "React.element"->Ok
+    | Raw("string | number") => "string"->Ok
     | Raw("boolean") => "bool"->Ok
     | Raw("number") => "int"->Ok
     | Raw("any") => "'any"->Ok
@@ -38,7 +40,8 @@ let createProperty = (prop: property): Result.t(string, string) => {
       let v =
         enums
         ->List.map(~f=enum => {
-            let enumCap = enum->String.capitalize;
+            let enumCap =
+              enum->String.capitalize |> Js.String.replace("-", "");
             {j|| [@bs.as "$(enum)"] `$(enumCap)|j};
           })
         ->List.join(~sep="\n" ++ indent);
@@ -82,6 +85,12 @@ let extraProps = (name: string): list(property) => {
     type_: Raw("ReactEvent.Mouse.t => unit"),
     comment: None,
   };
+  let id_ = {
+    name: "id_",
+    required: true,
+    type_: Raw("string"),
+    comment: None,
+  };
 
   [
     (name->String.startsWith(~prefix="Card"), [style]),
@@ -90,6 +99,7 @@ let extraProps = (name: string): list(property) => {
       List.includes(["Card", "Button", "Brand"], name, ~equal=String.equal),
       [onClick],
     ),
+    (List.includes(["TextInput"], name, ~equal=String.equal), [id_]),
   ]
   ->List.map(~f=((enabled, props)) => enabled ? props : [])
   ->List.flatten;

@@ -74,10 +74,17 @@ module Parser = {
 
   let parsePropTypeEnum: parser(list(string)) =
     spaceAround(
-      sepBy(
-        string(" | "),
-        surround(string("'"), regex1("[a-zA-Z]+"), string("'")),
-      ),
+      attempt(spaceAround(string("|")))
+      ->andThen(_ =>
+          sepBy(
+            spaceAround(string("|")),
+            surround(
+              string("'"),
+              regex1("[a-zA-Z][a-zA-Z0-9\\-]*"),
+              string("'"),
+            ),
+          )
+        ),
     )
     ->fmap(List.fromArray);
 
@@ -85,7 +92,7 @@ module Parser = {
     spaceAround(regex1("{[^}]+}"))->fmap(_ => "todo");
 
   let parsePropTypeRaw: parser(string) =
-    spaceAround(regex1("[a-zA-Z(][a-zA-Z<>:,'=() |\\[\\]\\.]+"));
+    spaceAround(regex1("[a-zA-Z(][a-zA-Z?<>:,'=() |\\[\\]\\.]+"));
 
   let parsePropType: parser(propertyType) =
     parsePropTypeRaw
