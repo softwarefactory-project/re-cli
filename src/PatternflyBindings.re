@@ -10,6 +10,7 @@ let nameToList = name =>
 let createProperty = (prop: property): Result.t(string, string) => {
   (
     switch (prop.type_) {
+    | Raw("React.RefObject<any>") => "skip-ref"->Error
     | Raw("React.ReactNode") => "'children"->Ok
     | Raw("React.ElementType<any>") => "React.element"->Ok
     | Raw("React.ReactElement") => "React.element"->Ok
@@ -38,7 +39,8 @@ let createProperty = (prop: property): Result.t(string, string) => {
       let v =
         enums
         ->List.map(~f=enum => {
-            let enumCap = enum->String.capitalize;
+            let enumCap =
+              enum->String.capitalize |> Js.String.replace("-", "");
             {j|| [@bs.as "$(enum)"] `$(enumCap)|j};
           })
         ->List.join(~sep="\n" ++ indent);
