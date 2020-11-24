@@ -8,29 +8,46 @@ let dest =
   ->Python.Os.Path.expanduser;
 
 let selectedComponents = [
+  "AboutModal",
+  "Accordion",
   "Alert",
   "AlertGroup",
+  "ApplicationLauncher",
   "Avatar",
+  "Backdrop",
+  "BackgroundImage",
   "Badge",
   "Banner",
   "Brand",
   "Breadcrumb",
   "Button",
+  "Card",
+  "Checkbox",
+  "ClipboardCopy",
   "DescriptionList",
   "Divider",
   "Drawer",
+  "Drawer",
   "Dropdown",
   "EmptyState",
-  "Checkbox",
-  "Card",
   "Form",
+  "Hint",
+  "Label",
+  "LabelGroup",
   "List",
   "LoginPage",
   "Nav",
   "Page",
+  "Radio",
+  "Spinner",
+  "Splitter",
+  "Tabs",
   "Text",
   "TextArea",
   "TextInput",
+  "Tile",
+  "Title",
+  "Toolbar",
 ];
 
 let components =
@@ -74,6 +91,20 @@ let create = (c: string): Result.t(list(string), string) =>
       };
     });
 
+let printList = f =>
+  Js.log(
+    selectedComponents
+    ->List.sort(~compare=String.compare)
+    ->List.map(~f)
+    ->List.join(~sep="\n"),
+  );
+
+/*
+ let printReasonList = () => printList(name => "  \"" ++ name ++ "\",");
+ printReasonList();
+ */
+let printReadmeList = () => printList(name => "- " ++ name);
+
 let (ok, failed) =
   components->List.map(~f=create)->PatternflyBindings.partitionResult;
 
@@ -90,5 +121,5 @@ ok
 ->Result.mapError(~f=e =>
     Js.log3("Failed:", e, ok->List.flatten->List.join(~sep="\n"))
   );
-
+printReadmeList();
 failed->List.join(~sep="\n")->Js.log;

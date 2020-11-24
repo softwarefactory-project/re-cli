@@ -13,7 +13,13 @@ let createProperty = (prop: property): Result.t(string, string) => {
     | Raw("OrderType") =>
       // todo: get from the List.tsx enum, but we need to thread the definitions down here
       "skip-order"->Error
+    | Raw("Size") =>
+      // todo: dito but for Title.tsx
+      "skip-size"->Error
+    | Raw("RefObject<HTMLDivElement>")
+    | Raw("RefObject<any>")
     | Raw("HTMLElement")
+    | Raw("React.Ref<any>")
     | Raw("React.RefObject<any>") => "skip-ref"->Error
     | Raw("React.ReactNode") => "'children"->Ok
     | Raw("React.ReactNode[]") => "array('children)"->Ok
@@ -22,6 +28,8 @@ let createProperty = (prop: property): Result.t(string, string) => {
     | Raw("React.ComponentType<any>")
     | Raw("React.ElementType<any>")
     | Raw("React.ReactElement") => "React.element"->Ok
+    | Raw("string | BackgroundImageSrcMap")
+    | Raw("number | string")
     | Raw("string | number") => "string"->Ok
     | Raw("boolean") => "bool"->Ok
     | Raw("number") => "int"->Ok
@@ -34,6 +42,10 @@ let createProperty = (prop: property): Result.t(string, string) => {
     | Raw("ReactEvent.Mouse.t => unit") => "ReactEvent.Mouse.t => unit"->Ok
     | Raw("ListVariant.inline") =>
       "[@bs.string] [ | [@bs.as \"inline\"] `Inline]"->Ok
+    | Raw(
+        "(checked: boolean, event: React.FormEvent<HTMLInputElement>) => void",
+      ) =>
+      "(bool, ReactEvent.Mouse.t) => unit"->Ok
     | Raw("(value: string, event: React.FormEvent<HTMLInputElement>) => void") =>
       "(string, ReactEvent.Mouse.t) => unit"->Ok
     | Raw("(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void") =>
