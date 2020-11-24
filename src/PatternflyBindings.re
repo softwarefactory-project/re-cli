@@ -5,22 +5,32 @@ open Tablecloth;
 
 let nameToList = name =>
   name->String.endsWith(~suffix="[]")
-    ? "list(" ++ name->String.dropRight(~count=2) ++ ")" : name;
+    ? "array(" ++ name->String.dropRight(~count=2) ++ ")" : name;
 
 let createProperty = (prop: property): Result.t(string, string) => {
   (
     switch (prop.type_) {
+    | Raw("OrderType") =>
+      // todo: get from the List.tsx enum, but we need to thread the definitions down here
+      "skip-order"->Error
+    | Raw("HTMLElement")
     | Raw("React.RefObject<any>") => "skip-ref"->Error
     | Raw("React.ReactNode") => "'children"->Ok
-    | Raw("React.ElementType<any>") => "React.element"->Ok
+    | Raw("React.ReactNode[]") => "array('children)"->Ok
+    | Raw("React.ReactElement<any>")
+    | Raw("React.ElementType")
+    | Raw("React.ComponentType<any>")
+    | Raw("React.ElementType<any>")
     | Raw("React.ReactElement") => "React.element"->Ok
     | Raw("string | number") => "string"->Ok
     | Raw("boolean") => "bool"->Ok
     | Raw("number") => "int"->Ok
-    | Raw("any") => "'any"->Ok
-    | Raw("object") => "'any"->Ok
-    | Raw("PageGroupProps") => "'any"->Ok
+    | Raw("any[]")
+    | Raw("any")
+    | Raw("object")
+    | Raw("PageGroupProps")
     | Raw("todo") => "'any"->Ok
+    | Raw("NavSelectClickHandler")
     | Raw("ReactEvent.Mouse.t => unit") => "ReactEvent.Mouse.t => unit"->Ok
     | Raw("ListVariant.inline") =>
       "[@bs.string] [ | [@bs.as \"inline\"] `Inline]"->Ok
@@ -54,6 +64,7 @@ $(indent)] |j});
       let name =
         switch (prop.name) {
         | "type" => "type_"
+        | "to" => "_to"
         | o => o
         };
       let type_ = type_name ++ (prop.required ? "" : "=?");
@@ -92,13 +103,23 @@ let extraProps = (name: string): list(property) => {
     comment: None,
   };
 
+  let navcb =
+    ["onSelect", "onToggle"]
+    ->List.map(~f=name =>
+        {name, required: false, type_: Raw("'callback"), comment: None}
+      );
+
+  let onClickComponents = ["Card", "Button", "Brand"];
+  let styleComponents = ["Page", "ListItem", "NavItem", "NavList"];
+
   [
     (name->String.startsWith(~prefix="Card"), [style]),
-    (name == "Page", [style]),
+    (styleComponents->List.includes(name, ~equal=String.equal), [style]),
     (
-      List.includes(["Card", "Button", "Brand"], name, ~equal=String.equal),
+      onClickComponents->List.includes(name, ~equal=String.equal),
       [onClick],
     ),
+    (List.includes(["Nav"], name, ~equal=String.equal), navcb),
     (List.includes(["TextInput"], name, ~equal=String.equal), [id_]),
   ]
   ->List.map(~f=((enabled, props)) => enabled ? props : [])

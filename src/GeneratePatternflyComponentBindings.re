@@ -4,25 +4,33 @@ let base =
   ->Python.Os.Path.expanduser;
 
 let dest =
-  "~/src/softwarefactory-project.io/software-factory/re-patternfly/src/Patternfly_Generated.re"
+  "~/src/softwarefactory-project.io/software-factory/re-patternfly/src/PFComponents.re"
   ->Python.Os.Path.expanduser;
 
 let selectedComponents = [
-  "Avatar",
-  "Checkbox",
-  "Card",
-  "Banner",
-  "Button",
-  "Brand",
-  "Badge",
   "Alert",
   "AlertGroup",
+  "Avatar",
+  "Badge",
+  "Banner",
+  "Brand",
+  "Breadcrumb",
+  "Button",
+  "DescriptionList",
+  "Divider",
+  "Drawer",
+  "Dropdown",
+  "EmptyState",
+  "Checkbox",
+  "Card",
   "Form",
+  "List",
+  "LoginPage",
+  "Nav",
+  "Page",
   "Text",
   "TextArea",
   "TextInput",
-  "LoginPage",
-  "Page",
 ];
 
 let components =
