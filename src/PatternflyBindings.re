@@ -75,7 +75,7 @@ $(indent)] |j});
   ->Result.andThen(~f=type_name => {
       let name =
         switch (prop.name) {
-        | "type" => "type_"
+        | "type" => "_type"
         | "to" => "_to"
         | o => o
         };
