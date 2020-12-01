@@ -193,3 +193,33 @@ let create = (defs: definitions): list((string, list(string))) => {
 
 let getComponents = d =>
   d->create->List.map(~f=((c, _e)) => c)->List.join(~sep="\n");
+
+// Process a typescript file
+let process = (c: string): Result.t(list(string), string) =>
+  c
+  ->(
+      x => {
+        Js.log("Processing: " ++ x);
+        c;
+      }
+    )
+  ->Python.read_file
+  ->Result.andThen(~f=content => {
+      let defs = content->Typescript.Parser.parseFile;
+      switch (defs.interfaces) {
+      | [_x, ..._xs] =>
+        defs
+        ->create
+        ->List.map(~f=((component, unknownProps)) =>
+            switch (unknownProps) {
+            | [] => component
+            | up =>
+              Js.log2("Could not create properties for: ", up->List.toArray);
+              component;
+            }
+          )
+        ->Ok
+      //      | [_x, ..._xs] => ("Multiple interface found " ++ c)->Error
+      | [] => ("No interface found " ++ c)->Error
+      };
+    });

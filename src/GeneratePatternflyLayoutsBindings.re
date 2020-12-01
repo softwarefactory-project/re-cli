@@ -25,7 +25,7 @@ Js.log(layouts);
 
 let (ok, failed) =
   layouts
-  ->List.map(~f=GeneratePatternflyComponentBindings.create)
+  ->List.map(~f=PatternflyBindings.process)
   ->PatternflyBindings.partitionResult;
 
 let annoteError = (~msg: string) => Result.mapError(~f=e => msg ++ e);
