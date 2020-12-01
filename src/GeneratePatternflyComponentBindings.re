@@ -62,35 +62,6 @@ let components =
   ->List.sort(~compare=String.compare)
   ->List.reverse;
 
-let create = (c: string): Result.t(list(string), string) =>
-  c
-  ->(
-      x => {
-        Js.log("Processing: " ++ x);
-        c;
-      }
-    )
-  ->Python.read_file
-  ->Result.andThen(~f=content => {
-      let defs = content->Typescript.Parser.parseFile;
-      switch (defs.interfaces) {
-      | [_x, ..._xs] =>
-        defs
-        ->PatternflyBindings.create
-        ->List.map(~f=((component, unknownProps)) =>
-            switch (unknownProps) {
-            | [] => component
-            | up =>
-              Js.log2("Could not create properties for: ", up->List.toArray);
-              component;
-            }
-          )
-        ->Ok
-      //      | [_x, ..._xs] => ("Multiple interface found " ++ c)->Error
-      | [] => ("No interface found " ++ c)->Error
-      };
-    });
-
 let printList = f =>
   Js.log(
     selectedComponents
@@ -106,7 +77,9 @@ let printList = f =>
 let printReadmeList = () => printList(name => "- " ++ name);
 
 let (ok, failed) =
-  components->List.map(~f=create)->PatternflyBindings.partitionResult;
+  components
+  ->List.map(~f=PatternflyBindings.process)
+  ->PatternflyBindings.partitionResult;
 
 let annoteError = (~msg: string) => Result.mapError(~f=e => msg ++ e);
 
