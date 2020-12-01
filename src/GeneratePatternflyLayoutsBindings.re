@@ -7,7 +7,14 @@ let dest =
   "~/src/softwarefactory-project.io/software-factory/re-patternfly/src/PFLayouts.re"
   ->Python.Os.Path.expanduser;
 
-let selectedLayouts = ["Bullseye", "Grid"];
+let selectedLayouts = [
+  "Bullseye",
+  "Gallery",
+  "Grid",
+  "Level",
+  "Split",
+  "Stack",
+];
 
 let layouts =
   base
