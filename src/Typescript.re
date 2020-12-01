@@ -70,7 +70,8 @@ module Parser = {
       ->fmap(xs => xs->Array.join(~sep="")->String.trim),
     );
 
-  let parsePropName: parser(string) = spaceAround(regex1("[a-zA-Z'\\-]+"));
+  let parsePropName: parser(string) =
+    spaceAround(regex1("[a-zA-Z][a-zA-Z0-9'\\-]+"));
 
   let parsePropTypeEnum: parser(list(string)) =
     spaceAround(
