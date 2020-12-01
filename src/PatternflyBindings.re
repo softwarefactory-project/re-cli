@@ -54,6 +54,8 @@ let createProperty =
     | Raw("todo") => "'any"->uniquify
     | Raw("NavSelectClickHandler")
     | Raw("ReactEvent.Mouse.t => unit") => "ReactEvent.Mouse.t => unit"->ok
+    | Raw("gridSpans")
+    | Raw("gridItemSpanValueShape") => "PFTypes.Column.t"->ok
     | Raw("ListVariant.inline") =>
       "[@bs.string] [ | [@bs.as \"inline\"] `Inline]"->ok
     | Raw(
