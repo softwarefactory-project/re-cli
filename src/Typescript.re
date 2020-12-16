@@ -3,10 +3,16 @@
 // The expressions are going to be loaded as the following types:
 type propertyType =
   | Enum(list(string))
-  | Raw(string);
+  | Raw(string)
+  | Func(string, string)
+  | Array(string)
+  | Inline(string);
 
 let enum = x => x->Enum;
 let raw = x => x->Raw;
+let func = (input, output) => Func(input, output);
+let arrayP = x => x->Array;
+let inline = x => x->Inline;
 
 type property = {
   name: string,
@@ -56,15 +62,16 @@ module Parser = {
   // Get the first result of a regexp parser
   let regex1: string => parser(string) = s => regex(s) <$> (r => r[0]);
 
-  let parsePropComment: parser(option(string)) =
-    attempt(
-      spaceAround(
-        surround(
-          string("/**"),
-          // Parse as many characters or new-lines that are not `*/`
-          many(regex1("(.|\n)(?!\\*\\/)")),
-          string("*/"),
-        ),
+  let parsePropComment: parser(string) =
+    spaceAround(
+      surround(
+        string("/**"),
+        // Parse as many characters or new-lines that are not `*/`
+        many(regex1("(.|\n)(?!\\*\\/)"))
+        ->andThen(xs =>
+            regex1(".")->andThen(x => xs->Belt.Array.concat([|x|])->unit)
+          ),
+        string("*/"),
       )
       // Assemble the array of characters back to a single string
       ->fmap(xs => xs->Array.join(~sep="")->String.trim),
@@ -93,11 +100,34 @@ module Parser = {
     spaceAround(regex1("{[^}]+}"))->fmap(_ => "todo");
 
   let parsePropTypeRaw: parser(string) =
-    spaceAround(regex1("[a-zA-Z(][a-zA-Z?<>:,'=() |\\[\\]\\.]+"));
+    spaceAround(regex1("[a-zA-Z][a-zA-Z?<>:,'=() |\\[\\]\\.]+"));
+
+  let parsePropTypeInline: parser(string) =
+    spaceAround(
+      surround(string("("), many(regex1("(.|\n)(?!\\))")), string(")")),
+    )
+    ->fmap(xs => xs->Array.join(~sep="")->String.trim);
+
+  let parsePropTypeFunc: parser((string, string)) =
+    spaceAround(
+      surround(string("("), regex1("[^)]*"), string(")"))
+      ->andThen(input =>
+          spaceAround(string("=>"))
+          ->andThen(_ => parsePropTypeRaw)
+          ->fmap(output => (input, output))
+        ),
+    );
+
+  let parsePropTypeArray: parser(string) =
+    spaceAround(surround(string("("), regex1("[^)]*"), string(")")))
+    ->andThen(input => string("[]")->andThen(_ => input->unit));
 
   let parsePropType: parser(propertyType) =
     parsePropTypeRaw
     ->fmap(raw)
+    ->orElse(lazy(parsePropTypeFunc->fmap(((x, y)) => func(x, y))))
+    ->orElse(lazy(parsePropTypeArray->fmap(arrayP)))
+    ->orElse(lazy(parsePropTypeInline->fmap(inline)))
     ->orElse(lazy(parsePropTypeObject->fmap(raw)))
     ->orElse(lazy(parsePropTypeEnum->fmap(enum)));
 
@@ -105,17 +135,18 @@ module Parser = {
     attempt(spaceAround(string("?")))->fmap(Option.isNone);
 
   let parseProp: parser(property) =
-    parsePropComment->andThen(comment =>
-      parsePropName->andThen(name =>
-        parseOptional->andThen(required =>
-          string(":")
-          ->andThen(_ =>
-              spaceAround(parsePropType)
-              ->fmap(type_ => {name, type_, comment, required})
-            )
+    attempt(parsePropComment)
+    ->andThen(comment =>
+        parsePropName->andThen(name =>
+          parseOptional->andThen(required =>
+            string(":")
+            ->andThen(_ =>
+                spaceAround(parsePropType)
+                ->fmap(type_ => {name, type_, comment, required})
+              )
+          )
         )
-      )
-    );
+      );
 
   let parseProps: parser(array(property)) =
     sepBy(string(";\n"), parseProp);
@@ -123,7 +154,7 @@ module Parser = {
   let parseWord: parser(string) = regex1("[^', ]+");
 
   let parseExtend: parser(string) =
-    string("extends ")->andThen(_ => regex1("[a-zA-Z'|<>,\\. ]+"));
+    string("extends ")->andThen(_ => regex1("[a-zA-Z'|<>,\\.\\n ]+"));
 
   let parseComponentName: parser(string) = regex1("[^ ]+Props");
 
