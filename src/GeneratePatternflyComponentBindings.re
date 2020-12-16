@@ -27,7 +27,7 @@ let selectedComponents = [
   "DescriptionList",
   "Divider",
   "Drawer",
-  "Drawer",
+  "Menu",
   "Dropdown",
   "EmptyState",
   "Form",
