@@ -22,6 +22,55 @@ let props = [
     (run(Parser.parsePropTypeEnum, "'ok''  ") |> get_exn)
     ->equal("enum", ["ok"]),
   () =>
+    (run(Parser.parsePropTypeFunc, "(int) => void") |> get_exn)
+    ->equal("func", ("int", "void")),
+  () =>
+    (run(Parser.parsePropTypeFunc, "() => void") |> get_exn)
+    ->equal("unitfunc", ("", "void")),
+  () =>
+    (run(Parser.parsePropComment, "/**test comment.*/") |> get_exn)
+    ->equal("comment", "test comment."),
+  () =>
+    (
+      run(Parser.parsePropComment, "/** a multi
+    *  line comment.
+    */")
+      |> get_exn
+    )
+    ->equal("multi comment", "a multi
+    *  line comment."),
+  () =>
+    (
+      run(
+        Parser.parsePropTypeFunc,
+        "({
+    className,
+    content,
+    componentRef
+  }: {
+    className: string;
+    content: React.ReactNode;
+    componentRef: any;
+  }) => React.ReactNode",
+      )
+      |> get_exn
+    )
+    ->equal(
+        "labelfunc",
+        (
+          "{
+    className,
+    content,
+    componentRef
+  }: {
+    className: string;
+    content: React.ReactNode;
+    componentRef: any;
+  }",
+          "React.ReactNode",
+        ),
+      ),
+  () =>
     (run(Parser.parsePropTypeEnum, "'ok' | 'info'  ") |> get_exn)
     ->equal("enums", ["ok", "info"]),
   () =>

@@ -7,6 +7,12 @@ let nameToList = name =>
   name->String.endsWith(~suffix="[]")
     ? "array(" ++ name->String.dropRight(~count=2) ++ ")" : name;
 
+let mapRaw = (prop, f) =>
+  switch (prop) {
+  | Raw(x) => x->f->Raw
+  | n => n
+  };
+
 let createProperty =
     (acc: list((int, Result.t(string, string))), prop: property)
     : list((int, Result.t(string, string))) => {
@@ -23,7 +29,7 @@ let createProperty =
   let error = n => (prev_idx, n->Error);
   let ok = n => (prev_idx, n->Ok);
   (
-    switch (prop.type_) {
+    switch (prop.type_->mapRaw(n => Js.String.replace(" | null", "", n))) {
     | Raw("OrderType") =>
       // todo: get from the List.tsx enum, but we need to thread the definitions down here
       "skip-order"->error
@@ -58,18 +64,23 @@ let createProperty =
     | Raw("gridItemSpanValueShape") => "PFTypes.Column.t"->ok
     | Raw("ListVariant.inline") =>
       "[@bs.string] [ | [@bs.as \"inline\"] `Inline]"->ok
-    | Raw(
-        "(checked: boolean, event: React.FormEvent<HTMLInputElement>) => void",
+    | Func(
+        "checked: boolean, event: React.FormEvent<HTMLInputElement>",
+        "void",
       ) =>
       "(bool, ReactEvent.Mouse.t) => unit"->ok
-    | Raw("(value: string, event: React.FormEvent<HTMLInputElement>) => void") =>
+    | Func("value: string, event: React.FormEvent<HTMLInputElement>", "void") =>
       "(string, ReactEvent.Mouse.t) => unit"->ok
-    | Raw("(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void") =>
+    | Func("event: React.MouseEvent<HTMLButtonElement, MouseEvent>", "void") =>
       "ReactEvent.Mouse.t => unit"->ok
-    | Raw(
-        "(checked: boolean, event: React.FormEvent<HTMLInputElement>) => void",
+    | Func(
+        "checked: boolean, event: React.FormEvent<HTMLInputElement>",
+        "void",
       ) =>
       "(bool, ReactEvent.Mouse.t) => unit"->ok
+    | Func(input, output) => ("skip-func: " ++ input ++ output)->error
+    | Inline(inline) => ("skip-inline: " ++ inline)->error
+    | Array(ar) => ("skip-array: " ++ ar)->error
     | Raw(rawName) =>
       let name = rawName->nameToList;
       name->String.includes(~substring=" ") ? name->error : name->ok;
