@@ -78,6 +78,7 @@ let createProperty =
         "void",
       ) =>
       "(bool, ReactEvent.Mouse.t) => unit"->ok
+    | Func("", "void") => "unit => unit"->ok
     | Func(input, output) => ("skip-func: " ++ input ++ output)->error
     | Inline(inline) => ("skip-inline: " ++ inline)->error
     | Array(ar) => ("skip-array: " ++ ar)->error
