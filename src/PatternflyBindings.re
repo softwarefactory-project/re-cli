@@ -40,6 +40,8 @@ let createProperty =
     | Raw("RefObject<HTMLDivElement>")
     | Raw("RefObject<any>")
     | Raw("HTMLElement")
+    | Raw("React.RefObject<HTMLElement>")
+    | Raw("React.RefObject<HTMLDivElement>")
     | Raw("React.Ref<any>")
     | Raw("React.RefObject<any>") => "skip-ref"->error
     | Raw("React.ReactNode") => "'children"->uniquify
@@ -49,9 +51,14 @@ let createProperty =
     | Raw("React.ComponentType<any>")
     | Raw("React.ElementType<any>")
     | Raw("ReactElement<any>")
+    | Raw("React.ReactElement[]")
     | Raw("React.ReactElement") => "React.element"->ok
+    | Raw("string | SelectOptionObject | (string | SelectOptionObject)[]") =>
+      "array(string)"->ok
     | Raw("string | BackgroundImageSrcMap")
     | Raw("number | string")
+    | Raw("string | React.ReactNode")
+    | Raw("string | SelectOptionObject")
     | Raw("string | number") => "string"->ok
     | Raw("boolean") => "bool"->ok
     | Raw("number") => "int"->ok
@@ -73,6 +80,8 @@ let createProperty =
       "(bool, ReactEvent.Mouse.t) => unit"->ok
     | Func("value: string, event: React.FormEvent<HTMLInputElement>", "void") =>
       "(string, ReactEvent.Mouse.t) => unit"->ok
+    | Func("event: React.MouseEvent, id: string", "void") =>
+      "(ReactEvent.Mouse.t, string) => unit"->ok
     | Func("event: React.MouseEvent<HTMLButtonElement, MouseEvent>", "void") =>
       "ReactEvent.Mouse.t => unit"->ok
     | Func(
@@ -81,6 +90,8 @@ let createProperty =
       ) =>
       "(bool, ReactEvent.Mouse.t) => unit"->ok
     | Func("", "void") => "unit => unit"->ok
+    | Func("value: string, date?: Date", "void") =>
+      "(string, Js.Date.t) => unit"->ok
     | Func(input, output) => ("skip-func: " ++ input ++ output)->error
     | Inline(inline) => ("skip-inline: " ++ inline)->error
     | Array(ar) => ("skip-array: " ++ ar)->error
@@ -92,6 +103,19 @@ let createProperty =
       let v =
         enums
         ->List.filter(~f=enum => enum != "HTMLElement" && enum != "2xl")
+        ->List.map(~f=enum =>
+            switch (0->Js.String.charAt(enum)) {
+            | x
+                when
+                  List.includes(
+                    ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+                    x,
+                    ~equal=String.equal,
+                  ) =>
+              "_" ++ enum
+            | _ => enum
+            }
+          )
         ->List.map(~f=enum => {
             let enumCap =
               enum->String.capitalize |> Js.String.replace("-", "");
@@ -103,6 +127,19 @@ $(indent)$(v)
 $(indent)] |j});
     }
   )
+  ->Tuple2.mapEach(
+      ~f=x => x,
+      ~g=
+        res =>
+          switch (prop.name, res) {
+          | ("onSelect", Error(x))
+              when Js.String.indexOf("SelectOption", x) >= 0 =>
+            "(unit, string, bool) => unit"->Ok
+          | ("onSelect", Error(_)) => "unit => unit"->Ok
+          | ("onToggle", Error(_)) => "bool => unit"->Ok
+          | _ => res
+          },
+    )
   ->Tuple2.mapSecond(~f=r =>
       r->Result.andThen(~f=type_name => {
         let name =
@@ -159,14 +196,14 @@ let extraProps = (name: string): list(property) => {
     comment: None,
   };
 
-  let navcb =
-    ["onSelect", "onToggle"]
-    ->List.map(~f=name =>
-        {name, required: false, type_: Raw("'callback"), comment: None}
-      );
-
   let onClickComponents = ["Card", "Button", "Brand"];
-  let styleComponents = ["Page", "ListItem", "NavItem", "NavList"];
+  let styleComponents = [
+    "Page",
+    "ListItem",
+    "NavItem",
+    "NavList",
+    "TextInput",
+  ];
 
   [
     (name->String.startsWith(~prefix="Card"), [style]),
@@ -175,9 +212,8 @@ let extraProps = (name: string): list(property) => {
       onClickComponents->List.includes(name, ~equal=String.equal),
       [onClick],
     ),
-    (List.includes(["Nav"], name, ~equal=String.equal), navcb),
     (
-      List.includes(["TextInput"], name, ~equal=String.equal),
+      List.includes(["TextInput", "DatePicker"], name, ~equal=String.equal),
       [id_, placeholder],
     ),
   ]

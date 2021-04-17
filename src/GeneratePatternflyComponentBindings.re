@@ -24,6 +24,8 @@ let selectedComponents = [
   "Card",
   "Checkbox",
   "ClipboardCopy",
+  "DataList",
+  "DatePicker",
   "DescriptionList",
   "Divider",
   "Drawer",
@@ -40,6 +42,7 @@ let selectedComponents = [
   "Nav",
   "Page",
   "Radio",
+  "Select",
   "Spinner",
   "Splitter",
   "Tabs",
@@ -51,6 +54,8 @@ let selectedComponents = [
   "Toolbar",
   "Tooltip",
 ];
+
+// let selectedComponents = ["DataList"]
 
 let components =
   base
