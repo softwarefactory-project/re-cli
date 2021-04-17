@@ -87,9 +87,9 @@ module Parser = {
           sepBy(
             spaceAround(string("|")),
             surround(
-              string("'"),
-              regex1("[a-zA-Z][a-zA-Z0-9\\-]*"),
-              string("'"),
+              regex1("['(]*"),
+              regex1("[a-zA-Z0-9][a-zA-Z0-9\\-]*"),
+              regex1("[')\\[\\]]*"),
             ),
           )
         ),

@@ -36,6 +36,7 @@ let createProperty =
     | Raw("Size") =>
       // todo: dito but for Title.tsx
       "skip-size"->error
+    | Raw("Partial<TippyProps>")
     | Raw("RefObject<HTMLDivElement>")
     | Raw("RefObject<any>")
     | Raw("HTMLElement")
@@ -47,6 +48,7 @@ let createProperty =
     | Raw("React.ElementType")
     | Raw("React.ComponentType<any>")
     | Raw("React.ElementType<any>")
+    | Raw("ReactElement<any>")
     | Raw("React.ReactElement") => "React.element"->ok
     | Raw("string | BackgroundImageSrcMap")
     | Raw("number | string")
@@ -89,6 +91,7 @@ let createProperty =
       let indent = "         ";
       let v =
         enums
+        ->List.filter(~f=enum => enum != "HTMLElement" && enum != "2xl")
         ->List.map(~f=enum => {
             let enumCap =
               enum->String.capitalize |> Js.String.replace("-", "");
@@ -108,9 +111,13 @@ $(indent)] |j});
           | "to" => "_to"
           | o => o
           };
-        let type_ = type_name ++ (prop.required ? "" : "=?");
-        name->String.includes(~substring="-")
-          ? name->Error : {j|~$(name): $(type_)|j}->Ok;
+        switch (prop.name) {
+        | "visiblity" => "typo"->Error
+        | _ =>
+          let type_ = type_name ++ (prop.required ? "" : "=?");
+          name->String.includes(~substring="-")
+            ? name->Error : {j|~$(name): $(type_)|j}->Ok;
+        };
       })
     )
   |> List.cons(acc);
@@ -145,6 +152,12 @@ let extraProps = (name: string): list(property) => {
     type_: Raw("string"),
     comment: None,
   };
+  let placeholder = {
+    name: "placeholder",
+    required: false,
+    type_: Raw("string"),
+    comment: None,
+  };
 
   let navcb =
     ["onSelect", "onToggle"]
@@ -163,7 +176,10 @@ let extraProps = (name: string): list(property) => {
       [onClick],
     ),
     (List.includes(["Nav"], name, ~equal=String.equal), navcb),
-    (List.includes(["TextInput"], name, ~equal=String.equal), [id_]),
+    (
+      List.includes(["TextInput"], name, ~equal=String.equal),
+      [id_, placeholder],
+    ),
   ]
   ->List.map(~f=((enabled, props)) => enabled ? props : [])
   ->List.flatten;

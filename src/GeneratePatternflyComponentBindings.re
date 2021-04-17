@@ -31,6 +31,7 @@ let selectedComponents = [
   "EmptyState",
   "Form",
   "Hint",
+  "InputGroup",
   "Label",
   "LabelGroup",
   "List",
@@ -48,6 +49,7 @@ let selectedComponents = [
   "Tile",
   "Title",
   "Toolbar",
+  "Tooltip",
 ];
 
 let components =

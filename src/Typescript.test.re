@@ -140,8 +140,8 @@ let interface = [
     let typescriptExpr = "export interface TextInputProps {
   /** Type that the input accepts. */
   type?: 'text' | 'date' | 'datetime-local';
+  flipBehavior?: 'flip' | ('top' | 'bottom' | 'left' | 'right')[];
 }";
-    // typescriptExpr->String.dropLeft(~count=99)->Js.log;
     (run(Parser.parseComponentInterface, typescriptExpr) |> get_exn).name
     ->equal("TextInput", "TextInput");
   },
