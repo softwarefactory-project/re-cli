@@ -92,7 +92,15 @@ let createProperty =
     | Func("", "void") => "unit => unit"->ok
     | Func("value: string, date?: Date", "void") =>
       "(string, Js.Date.t) => unit"->ok
-    | Func(input, output) => ("skip-func: " ++ input ++ output)->error
+    | Func("itemId: string, isFavorite: boolean", "void") =>
+      "(string, bool) => unit"->ok
+    | Func("event: React.MouseEvent", "void") =>
+      "ReactEvent.Mouse.t => unit"->ok
+    | Func("newOptionValue: string", "void") =>
+      "string => unit"->ok
+    | Func("e: React.ChangeEvent<HTMLInputElement>", "React.ReactElement[]") =>
+      "ReactEvent.Selection.t => array(React.element)"->ok
+    | Func(input, output) => ("skip-func: " ++ input ++ " " ++ output)->error
     | Inline(inline) => ("skip-inline: " ++ inline)->error
     | Array(ar) => ("skip-array: " ++ ar)->error
     | Raw(rawName) =>
