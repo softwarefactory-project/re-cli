@@ -59,6 +59,7 @@ let createProperty =
     | Raw("number | string")
     | Raw("string | React.ReactNode")
     | Raw("string | SelectOptionObject")
+    | Raw("FormFiledGroupHeaderTitleTextObject")
     | Raw("string | number") => "string"->ok
     | Raw("boolean") => "bool"->ok
     | Raw("number") => "int"->ok
@@ -66,6 +67,7 @@ let createProperty =
     | Raw("any")
     | Raw("object")
     | Raw("PageGroupProps")
+    | Raw("BadgeProps")
     | Raw("todo") => "'any"->uniquify
     | Raw("NavSelectClickHandler")
     | Raw("ReactEvent.Mouse.t => unit") => "ReactEvent.Mouse.t => unit"->ok
@@ -96,8 +98,11 @@ let createProperty =
       "(string, bool) => unit"->ok
     | Func("event: React.MouseEvent", "void") =>
       "ReactEvent.Mouse.t => unit"->ok
+    | Func("value: string", "void")
     | Func("newOptionValue: string", "void") =>
       "string => unit"->ok
+    | Func("e: React.ChangeEvent<HTMLInputElement>, value: string", "React.ReactElement[]") =>
+      "(ReactEvent.Selection.t, string) => array(React.element)"->ok
     | Func("e: React.ChangeEvent<HTMLInputElement>", "React.ReactElement[]") =>
       "ReactEvent.Selection.t => array(React.element)"->ok
     | Func(input, output) => ("skip-func: " ++ input ++ " " ++ output)->error
