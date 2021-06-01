@@ -9,6 +9,7 @@ let dest =
 
 let selectedLayouts = [
   "Bullseye",
+  "Flex",
   "Gallery",
   "Grid",
   "Level",

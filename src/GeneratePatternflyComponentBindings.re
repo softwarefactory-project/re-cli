@@ -39,6 +39,7 @@ let selectedComponents = [
   "List",
   "LoginPage",
   "Menu",
+  "Modal",
   "Nav",
   "Page",
   "Radio",
@@ -55,7 +56,7 @@ let selectedComponents = [
   "Tooltip",
 ];
 
-// let selectedComponents = ["DataList"]
+// let selectedComponents = ["Modal"]
 
 let components =
   base

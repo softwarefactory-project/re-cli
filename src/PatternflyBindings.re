@@ -115,7 +115,7 @@ let createProperty =
       let indent = "         ";
       let v =
         enums
-        ->List.filter(~f=enum => enum != "HTMLElement" && enum != "2xl")
+        ->List.filter(~f=enum => enum != "HTMLElement" && enum != "2xl" && enum != "React.ComponentType<any>" && enum != "React.ReactNode")
         ->List.map(~f=enum =>
             switch (0->Js.String.charAt(enum)) {
             | x

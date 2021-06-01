@@ -88,7 +88,7 @@ module Parser = {
             spaceAround(string("|")),
             surround(
               regex1("['(]*"),
-              regex1("[a-zA-Z0-9][a-zA-Z0-9\\-]*"),
+              regex1("[a-zA-Z0-9][a-zA-Z0-9\\.<>\\-]*"),
               regex1("[')\\[\\]]*"),
             ),
           )
