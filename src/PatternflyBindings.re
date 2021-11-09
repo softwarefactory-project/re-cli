@@ -61,6 +61,7 @@ let createProperty =
     | Raw("string | SelectOptionObject")
     | Raw("FormFiledGroupHeaderTitleTextObject")
     | Raw("string | number") => "string"->ok
+    | Raw("number | boolean") => "int"->ok
     | Raw("boolean") => "bool"->ok
     | Raw("number") => "int"->ok
     | Raw("any[]")
