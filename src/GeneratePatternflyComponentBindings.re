@@ -101,6 +101,6 @@ ok
 ->Result.andThen(~f=() => Js.log(dest ++ ": updated")->Ok)
 ->Result.mapError(~f=e =>
     Js.log3("Failed:", e, ok->List.flatten->List.join(~sep="\n"))
-  );
+  )->ignore;
 printReadmeList();
 failed->List.join(~sep="\n")->Js.log;

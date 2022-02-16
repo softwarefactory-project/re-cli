@@ -120,7 +120,7 @@ module JSWorld: Effect = {
 Js.log("\nJs effects:");
 module JSMain = Main(JSWorld);
 Js.log(JSMain.run);
-JSMain.run();
+JSMain.run()->ignore;
 
 // A Test implementation
 module TestWorld: Effect = {
@@ -149,5 +149,5 @@ module TestWorld: Effect = {
 
 Js.log("\nTest effects:");
 module TestMain = Main(TestWorld);
-TestMain.run();
+TestMain.run()->ignore;
 Js.log(TestMain.getLog()->Tablecloth.List.toArray);

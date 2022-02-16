@@ -518,7 +518,7 @@ let show =
   >>> Result.ok;
 
 let button = "~/src/github.com/patternfly/patternfly-react/packages/react-core/src/components/Button/Button.tsx";
-button->Python.read_file->Result.andThen(~f=show);
+button->Python.read_file->Result.andThen(~f=show)->ignore;
 
 let tests =
   List.append(props, List.append(interface, [enum, file, reason]));

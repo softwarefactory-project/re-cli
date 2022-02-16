@@ -18,6 +18,6 @@
   "dependencies": {
     "bs-parse": "git+https://github.com/aitoroses/bs-parse.git",
     "js-yaml": "^3.14.0",
-    "tablecloth-bucklescript": "0.0.7"
+    "tablecloth-bucklescript": "git+https://github.com/darklang/tablecloth.git"
   }
 }

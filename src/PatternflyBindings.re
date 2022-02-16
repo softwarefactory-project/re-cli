@@ -87,11 +87,6 @@ let createProperty =
       "(ReactEvent.Mouse.t, string) => unit"->ok
     | Func("event: React.MouseEvent<HTMLButtonElement, MouseEvent>", "void") =>
       "ReactEvent.Mouse.t => unit"->ok
-    | Func(
-        "checked: boolean, event: React.FormEvent<HTMLInputElement>",
-        "void",
-      ) =>
-      "(bool, ReactEvent.Mouse.t) => unit"->ok
     | Func("", "void") => "unit => unit"->ok
     | Func("value: string, date?: Date", "void") =>
       "(string, Js.Date.t) => unit"->ok
