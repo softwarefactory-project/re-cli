@@ -113,7 +113,7 @@ module Parser = {
       surround(string("("), regex1("[^)]*"), string(")"))
       ->andThen(input =>
           spaceAround(string("=>"))
-          ->andThen(_ => parsePropTypeRaw)
+          ->andThen(_ => parsePropTypeRaw->orElse(lazy(parsePropTypeEnum->fmap(_=>"ENUM"))))
           ->fmap(output => (input, output))
         ),
     );

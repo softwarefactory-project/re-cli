@@ -28,6 +28,9 @@ let props = [
     (run(Parser.parsePropTypeFunc, "() => void") |> get_exn)
     ->equal("unitfunc", ("", "void")),
   () =>
+    (run(Parser.parsePropTypeFunc, "(width: number | null) => 'default' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'") |> get_exn)
+    ->equal("enum-func", ("width: number | null", "ENUM")),
+  () =>
     (run(Parser.parsePropComment, "/**test comment.*/") |> get_exn)
     ->equal("comment", "test comment."),
   () =>
@@ -227,7 +230,6 @@ let interface = [
   /** Modal handles pressing of the Escape key and closes the modal. If you want to handle this yourself you can use this callback function */
   onEscapePress?: (event: KeyboardEvent) => void;
 }";
-    typescriptExpr->String.dropLeft(~count=651)->Js.log;
     (run(Parser.parseComponentInterface, typescriptExpr) |> get_exn).name
     ->equal("Modal", "Modal");
   },
@@ -372,7 +374,7 @@ let interface = [
   /** Aria Label for the nav toggle button */
   'aria-label'?: string;
 }";
-    typescriptExpr->String.dropLeft(~count=152)->Js.log;
+    // typescriptExpr->String.dropLeft(~count=152)->Js.log;
     (run(Parser.parseComponentInterface, typescriptExpr) |> get_exn).name
     ->equal("PageHeader", "PageHeader");
   },

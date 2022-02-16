@@ -7,19 +7,19 @@ Hello! This project allows you to quickly get started with Reason and BuckleScri
 Install runtime and package manager:
 
 ```bash
-sudo dnf install -y nodejs yarnpkg
+sudo dnf install -y nodejs
 ```
 
 Then install dependencies:
 
 ```bash
-yarn install
+npm install
 ```
 
 # Build + Watch
 
 ```bash
-yarn start
+npm start
 ```
 
 # Run tool
@@ -27,6 +27,11 @@ yarn start
 ```bash
 node src/Hello.bs.js
 ```
+
+# Render patternfly bindings
+
+- Clone ~/src/github.com/patternfly/patternfly-react and src/softwarefactory-project.io/software-factory/re-patternfly
+- Run: `npm run build && node src/GeneratePatternflyComponentBindings.bs.js`
 
 # Read documentation:
 

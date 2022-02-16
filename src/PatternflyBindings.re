@@ -33,11 +33,13 @@ let createProperty =
     | Raw("OrderType") =>
       // todo: get from the List.tsx enum, but we need to thread the definitions down here
       "skip-order"->error
+    | Raw("TextInputProps") => "skip-props"->error
     | Raw("Size") =>
       // todo: dito but for Title.tsx
       "skip-size"->error
     | Raw("Partial<TippyProps>")
     | Raw("RefObject<HTMLDivElement>")
+    | Raw("React.Ref<HTMLDivElement>")
     | Raw("RefObject<any>")
     | Raw("HTMLElement")
     | Raw("React.RefObject<HTMLElement>")
